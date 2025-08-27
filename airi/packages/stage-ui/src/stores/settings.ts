@@ -40,13 +40,20 @@ export const useSettings = defineStore('settings', () => {
   const stageModelSelected = useLocalStorage<string | undefined>('settings/stage/model', 'preset-live2d-1')
   const stageModelSelectedDisplayModel = ref<DisplayModel | undefined>()
   const stageModelSelectedUrl = ref<string>()
-  const stageModelRenderer = ref<'live2d' | 'vrm' | 'disabled'>()
+  const stageModelRenderer = ref<'live2d' | 'vrm' | 'video' | 'disabled'>()
 
   async function updateStageModel() {
     if (!stageModelSelected.value) {
       stageModelSelectedUrl.value = undefined
       stageModelSelectedDisplayModel.value = undefined
       stageModelRenderer.value = 'disabled'
+      return
+    }
+
+    // Check for special video mode
+    if (stageModelSelected.value === 'video-ichika') {
+      stageModelRenderer.value = 'video'
+      stageModelSelectedUrl.value = '/assets/girl/scene01'
       return
     }
 

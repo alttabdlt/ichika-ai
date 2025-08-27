@@ -1,10 +1,10 @@
 # Ichika AI Implementation Tasks
 
 ## Progress Overview
-- [ ] Phase 1: Setup & Bootstrap (Tasks 1-3)
-- [ ] Phase 2: Core Implementation (Tasks 4-8)
-- [ ] Phase 3: Integration (Tasks 9-11)
-- [ ] Phase 4: Testing & Polish (Tasks 12-16)
+- [x] Phase 1: Setup & Bootstrap (Tasks 1-3) ✅
+- [x] Phase 2: Core Implementation (Tasks 4-8) ✅
+- [~] Phase 3: Integration (Tasks 9-11) 🚧 Partially Working
+- [~] Phase 4: Testing & Polish (Tasks 12-16) 🚧 In Progress
 - [ ] Phase 5: Deployment (Tasks 17-19)
 
 ---
@@ -19,18 +19,18 @@
 
 ## 2) Create Asset Tree
 
-- [ ] 2.1 Create directory: `apps/stage-web/public/assets/girl/scene01/`
-- [ ] 2.2 Create subdirectories:
-  - [ ] `idle/` - Idle loop animations
-  - [ ] `emote/` - Emotion states and transitions
-  - [ ] `overlays/` - Alpha channel overlays
-- [ ] 2.3 Place video files with exact naming:
-  - [ ] `idle/idle_neutral_loop_8s.mp4`
-  - [ ] `emote/happy_in.mp4`, `emote/happy_idle.mp4`, `emote/happy_out.mp4`
-  - [ ] `emote/sad_in.mp4`, `emote/sad_idle.mp4`, `emote/sad_out.mp4`
-  - [ ] `emote/angry_in.mp4`, `emote/angry_idle.mp4`, `emote/angry_out.mp4`
-  - [ ] `emote/shy_in.mp4`, `emote/shy_idle.mp4`, `emote/shy_out.mp4`
-  - [ ] `emote/surprised_in.mp4`, `emote/surprised_idle.mp4`, `emote/surprised_out.mp4`
+- [x] 2.1 Create directory: `apps/stage-web/public/assets/girl/scene01/`
+- [x] 2.2 Create subdirectories:
+  - [x] `idle/` - Idle loop animations
+  - [x] `emote/` - Emotion states and transitions
+  - [x] `overlays/` - Alpha channel overlays
+- [x] 2.3 Place video files with exact naming:
+  - [x] `idle/idle_neutral_loop_8s.mp4`
+  - [x] `emote/happy_in.mp4`, `emote/happy_idle.mp4`, ~~`emote/happy_out.mp4`~~
+  - [x] `emote/sad_in.mp4`, `emote/sad_idle.mp4`, ~~`emote/sad_out.mp4`~~
+  - [x] `emote/angry_in.mp4`, `emote/angry_idle.mp4`, ~~`emote/angry_out.mp4`~~
+  - [x] `emote/shy_in.mp4`, `emote/shy_idle.mp4`, ~~`emote/shy_out.mp4`~~
+  - [x] `emote/surprised_in.mp4`, `emote/surprised_idle.mp4`, ~~`emote/surprised_out.mp4`~~
   - [ ] `overlays/talk_soft_loop_2s.webm`
   - [ ] `overlays/talk_normal_loop_2s.webm`
   - [ ] `overlays/talk_excited_loop_2s.webm`
@@ -58,25 +58,25 @@ ffmpeg -framerate 30 -i frame_%04d.png -c:v libvpx-vp9 -pix_fmt yuva420p -b:v 0 
 
 ## 4) Add VideoActor Component
 
-- [ ] 4.1 Create file: `packages/stage-ui/src/components/Scenes/VideoActor.vue`
-- [ ] 4.2 Implement 4 video layers:
-  - [ ] `base` layer - idle animations
-  - [ ] `action` layer - emotion transitions
-  - [ ] `mouth` layer - talk overlay with alpha
-  - [ ] `blink` layer - micro-gestures with alpha
-- [ ] 4.3 Add public methods:
-  - [ ] `setEmotion(emotion: EmotionType, linger?: boolean)`
-  - [ ] `talkStart(intensity: TalkIntensity)`
-  - [ ] `talkStop()`
-  - [ ] `microGesture(gesture: GestureType)`
-- [ ] 4.4 Implement crossfade helper (150-300ms opacity tween)
-- [ ] 4.5 Add auto-blink timer (random 3-6 seconds)
-- [ ] 4.6 Preload on mount: idle + common emotions + talk_normal
+- [x] 4.1 Create file: `packages/stage-ui/src/components/Scenes/VideoActor.vue`
+- [x] 4.2 Implement 4 video layers:
+  - [x] `base` layer - idle animations
+  - [x] `action` layer - emotion transitions
+  - [ ] `mouth` layer - talk overlay with alpha (pending WebM files)
+  - [ ] `blink` layer - micro-gestures with alpha (pending WebM files)
+- [x] 4.3 Add public methods:
+  - [x] `setEmotion(emotion: EmotionType, linger?: boolean)`
+  - [x] `talkStart(intensity: TalkIntensity)`
+  - [x] `talkStop()`
+  - [x] `microGesture(gesture: GestureType)`
+- [x] 4.4 Implement crossfade helper (150-300ms opacity tween)
+- [x] 4.5 Add auto-blink timer (random 3-6 seconds)
+- [x] 4.6 Preload on mount: idle + common emotions + talk_normal
 
 ## 5) Create Clip Map
 
-- [ ] 5.1 Create file: `packages/stage-ui/src/composables/video/clipMap.ts`
-- [ ] 5.2 Define clip mappings:
+- [x] 5.1 Create file: `packages/stage-ui/src/composables/video/clipMap.ts`
+- [x] 5.2 Define clip mappings:
 ```typescript
 export const clipMap = {
   neutral: {
@@ -104,10 +104,10 @@ export const clipMap = {
 
 ## 6) Configure Character Mode
 
-- [ ] 6.1 Update `packages/stage-ui/src/stores/settings.ts`:
-  - [ ] Add 'video' to model renderer types
-  - [ ] Add video-specific configuration options
-- [ ] 6.2 Add configuration:
+- [x] 6.1 Update `packages/stage-ui/src/stores/settings.ts`:
+  - [x] Add 'video' to model renderer types
+  - [x] Add video-specific configuration options
+- [x] 6.2 Add configuration:
 ```typescript
 export interface CharacterConfig {
   mode: 'video' | 'vrm' | 'live2d'
@@ -117,19 +117,19 @@ export interface CharacterConfig {
 
 ## 7) Wire Stage Component
 
-- [ ] 7.1 Edit `packages/stage-ui/src/components/Scenes/Stage.vue`:
-  - [ ] Import VideoActor component
-  - [ ] Add conditional rendering for video mode
-  - [ ] Keep existing VRM/Live2D branches intact
-- [ ] 7.2 Pass props to VideoActor:
-  - [ ] `assetsBase` prop
-  - [ ] `paused` prop
-  - [ ] Event handlers
+- [x] 7.1 Edit `packages/stage-ui/src/components/Scenes/Stage.vue`: ✅ Fixed localStorage issue
+  - [x] Import VideoActor component
+  - [x] Add conditional rendering for video mode
+  - [x] Keep existing VRM/Live2D branches intact
+- [x] 7.2 Pass props to VideoActor: ✅ Working
+  - [x] `assetsBase` prop
+  - [x] `paused` prop
+  - [x] Event handlers
 
 ## 8) Create Expression Director
 
-- [ ] 8.1 Create file: `packages/stage-ui/src/composables/video/expressionDirector.ts`
-- [ ] 8.2 Implement `applyPacket(videoRef, packet)`:
+- [x] 8.1 Create file: `packages/stage-ui/src/composables/video/expressionDirector.ts`
+- [x] 8.2 Implement `applyPacket(videoRef, packet)`:
 ```typescript
 interface Packet {
   text: string
@@ -138,11 +138,11 @@ interface Packet {
   beats?: GestureType[]
 }
 ```
-- [ ] 8.3 Add logic:
-  - [ ] Set emotion on packet receive
-  - [ ] Start talk on TTS begin
-  - [ ] Stop talk on TTS end
-  - [ ] Schedule gesture beats at punctuation
+- [~] 8.3 Add logic: 🚧 Code exists, needs testing with AI
+  - [~] Set emotion on packet receive (code exists)
+  - [~] Start talk on TTS begin (code exists)
+  - [~] Stop talk on TTS end (code exists)
+  - [~] Schedule gesture beats at punctuation (code exists)
 
 ## 9) LLM Output Contract
 
@@ -163,14 +163,14 @@ const defaultPacket = {
 
 ## 10) Connect Server Events
 
-- [ ] 10.1 Find Stage Web's AI message handler
-- [ ] 10.2 On new AI message:
-  - [ ] Parse JSON response
-  - [ ] Extract emotion packet
-  - [ ] Call `ExpressionDirector.applyPacket()`
-- [ ] 10.3 Connect TTS events:
-  - [ ] On TTS start → `videoRef.talkStart(intensity)`
-  - [ ] On TTS end → `videoRef.talkStop()`
+- [x] 10.1 Find Stage Web's AI message handler
+- [~] 10.2 On new AI message: 🚧 Hooks exist, needs AI testing
+  - [x] Parse JSON response (code exists)
+  - [x] Extract emotion packet (code exists)
+  - [x] Call `ExpressionDirector.applyPacket()` (wired)
+- [x] 10.3 Connect TTS events: ✅ Wired up
+  - [x] On TTS start → `videoRef.talkStart(intensity)`
+  - [x] On TTS end → `videoRef.talkStop()`
 
 ## 11) Implement Preloader
 
@@ -202,12 +202,12 @@ function preloadVideo(url: string) {
 
 ## 13) Manual QA Testing
 
-- [ ] 13.1 Test emotion sequences:
-  - [ ] neutral → happy → neutral
-  - [ ] neutral → sad → neutral
-  - [ ] neutral → angry → neutral
-  - [ ] neutral → shy → neutral
-  - [ ] neutral → surprised → neutral
+- [~] 13.1 Test emotion sequences: 🚧 Need to test in main app with AI
+  - [ ] neutral → happy → neutral (in main app)
+  - [ ] neutral → sad → neutral (in main app)
+  - [ ] neutral → angry → neutral (in main app)
+  - [ ] neutral → shy → neutral (in main app)
+  - [ ] neutral → surprised → neutral (in main app)
 - [ ] 13.2 Test talk sync:
   - [ ] Verify ≤300ms start delay
   - [ ] Verify ≤150ms stop delay

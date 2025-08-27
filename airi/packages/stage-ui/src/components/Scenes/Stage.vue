@@ -16,8 +16,10 @@ import { onMounted, onUnmounted, ref } from 'vue'
 
 import Live2DScene from './Live2D.vue'
 import VRMScene from './VRM.vue'
+import VideoActor from './VideoActor.vue'
 
 import { useQueue } from '../../composables/queue'
+import { useExpressionDirector } from '../../composables/video/expressionDirector'
 import { useDelayMessageQueue, useEmotionsMessageQueue, useMessageContentQueue } from '../../composables/queues'
 import { llmInferenceEndToken } from '../../constants'
 import { EMOTION_EmotionMotionName_value, EMOTION_VRMExpressionName_value, EmotionThinkMotionName } from '../../constants/emotions'
@@ -42,6 +44,8 @@ const db = ref<DuckDBWasmDrizzleDatabase>()
 
 const vrmViewerRef = ref<InstanceType<typeof VRMScene>>()
 const live2dSceneRef = ref<InstanceType<typeof Live2DScene>>()
+const videoActorRef = ref<InstanceType<typeof VideoActor>>()
+const expressionDirector = useExpressionDirector()
 
 const settingsStore = useSettings()
 const { stageModelRenderer, stageViewControlsEnabled, live2dDisableFocus, stageModelSelectedUrl } = storeToRefs(settingsStore)
@@ -90,9 +94,21 @@ const audioQueue = useQueue<{ audioBuffer: AudioBuffer, text: string }>({
 
         // Start playing the audio
         nowSpeaking.value = true
+        
+        // Start video actor talking if available
+        if (stageModelRenderer.value === 'video' && videoActorRef.value) {
+          expressionDirector.onTTSStart(videoActorRef.value)
+        }
+        
         source.start(0)
         source.onended = () => {
           nowSpeaking.value = false
+          
+          // Stop video actor talking if available
+          if (stageModelRenderer.value === 'video' && videoActorRef.value) {
+            expressionDirector.onTTSEnd(videoActorRef.value)
+          }
+          
           resolve()
         }
       })
@@ -170,6 +186,21 @@ const emotionsQueue = useQueue<Emotion>({
       }
       else if (stageModelRenderer.value === 'live2d') {
         currentMotion.value = { group: EMOTION_EmotionMotionName_value[ctx.data] }
+      }
+      else if (stageModelRenderer.value === 'video' && videoActorRef.value) {
+        // Map AIRI emotions to video emotions
+        const emotionMap: Record<string, any> = {
+          '<|EMOTE_NEUTRAL|>': 'neutral',
+          '<|EMOTE_HAPPY|>': 'happy',
+          '<|EMOTE_SAD|>': 'sad',
+          '<|EMOTE_ANGRY|>': 'angry',
+          '<|EMOTE_AWKWARD|>': 'shy',
+          '<|EMOTE_SURPRISE|>': 'surprised',
+          '<|EMOTE_QUESTION|>': 'neutral',
+          '<|EMOTE_THINK|>': 'neutral',
+        }
+        const videoEmotion = emotionMap[ctx.data] || 'neutral'
+        await videoActorRef.value.setEmotion(videoEmotion, true)
       }
     },
   ],
@@ -285,6 +316,15 @@ defineExpose({
         min-w="50% <lg:full" min-h="100 sm:100" h-full w-full flex-1
         :paused="paused"
         :show-axes="stageViewControlsEnabled"
+        @error="console.error"
+      />
+      <VideoActor
+        v-if="stageModelRenderer === 'video' && showStage"
+        ref="videoActorRef"
+        min-w="50% <lg:full" min-h="100 sm:100" h-full w-full flex-1
+        :paused="paused"
+        :assets-base="stageModelSelectedUrl"
+        @ready="console.log('Video actor ready')"
         @error="console.error"
       />
     </div>
