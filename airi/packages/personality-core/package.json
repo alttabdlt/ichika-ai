@@ -1,0 +1,27 @@
+{
+  "name": "@proj-airi/personality-core",
+  "version": "0.1.0",
+  "description": "AI girlfriend companion personality engine",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@proj-airi/shared": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.9",
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.3"
+  }
+}

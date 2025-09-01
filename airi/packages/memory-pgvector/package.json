@@ -23,7 +23,8 @@
     "@guiiai/logg": "^1.0.10",
     "@proj-airi/server-sdk": "workspace:^",
     "drizzle-orm": "^0.44.4",
-    "postgres": "^3.4.7"
+    "postgres": "^3.4.7",
+    "drizzle-orm-pg-vector": "^1.0.0"
   },
   "devDependencies": {
     "tsx": "^4.20.3"
