@@ -8,7 +8,7 @@ import { streamText } from '@xsai/stream-text'
 import { defineStore } from 'pinia'
 import { ref } from 'vue'
 
-import { debug, mcp } from '../tools'
+import { debug } from '../tools'
 
 export interface StreamOptions {
   headers?: Record<string, string>
@@ -36,10 +36,7 @@ async function streamFrom(model: string, chatProvider: ChatProvider, messages: M
     headers,
     // TODO: we need Automatic tools discovery
     tools: streamOptionsToolsCompatibilityOk(model, chatProvider, messages, options)
-      ? [
-          ...await mcp(),
-          ...await debug(),
-        ]
+      ? await debug()
       : undefined,
     onEvent(event) {
       if (event.type === 'tool-call') {

@@ -238,11 +238,12 @@
 ## 📝 Implementation Priority
 
 ### Phase 1: Core Infrastructure ✅
-1. ✅ Environment configuration (.env files)
+1. ✅ Environment configuration (.env files) 
 2. ✅ Personality core package
 3. ✅ Vision service setup
+4. ✅ Ollama models installed (llama3.2:3b, nomic-embed-text)
 
-### Phase 2: Memory System ✅
+### Phase 2: Memory System ✅ 
 1. ✅ Complete memory-pgvector package
 2. ❌ Wire to telegram bot
 3. ❌ Wire to frontend

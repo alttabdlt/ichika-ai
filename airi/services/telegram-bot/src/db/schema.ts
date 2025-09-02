@@ -1,4 +1,4 @@
-import { bigint, boolean, index, integer, jsonb, pgTable, text, uniqueIndex, uuid, vector } from 'drizzle-orm/pg-core'
+import { bigint, boolean, index, integer, jsonb, pgTable, real, text, timestamp, uniqueIndex, uuid, vector } from 'drizzle-orm/pg-core'
 
 export const chatMessagesTable = pgTable('chat_messages', {
   id: uuid().primaryKey().defaultRandom(),
@@ -16,10 +16,17 @@ export const chatMessagesTable = pgTable('chat_messages', {
   content_vector_1536: vector({ dimensions: 1536 }),
   content_vector_1024: vector({ dimensions: 1024 }),
   content_vector_768: vector({ dimensions: 768 }),
+  // Memory system additions
+  user_id: uuid().references(() => usersTable.id),
+  importance: integer().default(5), // 1-10 scale
+  emotional_context: jsonb(),
+  conversation_id: text(),
 }, table => [
   index('chat_messages_content_vector_1536_index').using('hnsw', table.content_vector_1536.op('vector_cosine_ops')),
   index('chat_messages_content_vector_1024_index').using('hnsw', table.content_vector_1024.op('vector_cosine_ops')),
   index('chat_messages_content_vector_768_index').using('hnsw', table.content_vector_768.op('vector_cosine_ops')),
+  index('chat_messages_user_id_index').on(table.user_id),
+  index('chat_messages_conversation_id_index').on(table.conversation_id),
 ])
 
 export const stickersTable = pgTable('stickers', {
@@ -97,6 +104,38 @@ export const joinedChatsTable = pgTable('joined_chats', () => {
     },
   ]
 })
+
+// New tables for memory system
+export const usersTable = pgTable('users', {
+  id: uuid().primaryKey().defaultRandom(),
+  username: text(),
+  platform: text().notNull(),
+  platform_user_id: text().notNull(),
+  preferences: jsonb(),
+  relationship_level: integer().default(0), // 0-5 scale (stranger to intimate)
+  created_at: timestamp().defaultNow(),
+  updated_at: timestamp().defaultNow(),
+}, table => [
+  uniqueIndex('users_platform_user_id_unique').on(table.platform, table.platform_user_id),
+  index('users_username_index').on(table.username),
+])
+
+export const memorySummariesTable = pgTable('memory_summaries', {
+  id: uuid().primaryKey().defaultRandom(),
+  conversation_id: text().notNull(),
+  summary_text: text().notNull(),
+  summary_vector_768: vector({ dimensions: 768 }),
+  start_time: timestamp().notNull(),
+  end_time: timestamp().notNull(),
+  message_count: integer().default(0),
+  topics: jsonb(), // Array of topics discussed
+  emotional_tone: text(), // Overall emotional tone
+  importance_score: real().default(0.5), // 0-1 scale
+}, table => [
+  index('memory_summaries_conversation_id_index').on(table.conversation_id),
+  index('memory_summaries_time_range_index').on(table.start_time, table.end_time),
+  index('memory_summaries_vector_index').using('hnsw', table.summary_vector_768.op('vector_cosine_ops')),
+])
 
 export const chatCompletionsHistoryTable = pgTable('chat_completions_history', {
   id: uuid().primaryKey().defaultRandom(),
